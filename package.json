@@ -1,0 +1,8 @@
+{
+  "name": "cfh.vox",
+  "version": "0.1.0",
+  "description": "A WebGL voxel engine",
+  "author": "fenliz",
+  "license": "MIT",
+  "dependencies": {}
+}
