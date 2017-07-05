@@ -88,24 +88,51 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var Canvas_1 = __webpack_require__(2);
 var Game = (function () {
     function Game(width, height) {
+        this.timeAtLastFrame = new Date().getTime();
+        this.idealTimePerFrame = 1000 / 60;
+        this.leftover = 0;
+        this.frames = 0;
+        this.fpsReset = 0;
+        this.fps = 0;
         this.canvas = new Canvas_1.Canvas(width, height);
     }
     Game.prototype.start = function () {
         this.isRunning = true;
-        this.processFrame();
+        this.tick();
     };
     Game.prototype.stop = function () {
         this.isRunning = false;
     };
-    Game.prototype.processFrame = function () {
+    Game.prototype.tick = function () {
         if (this.isRunning) {
+            var timeAtThisFrame = new Date().getTime();
+            var deltaTime = timeAtThisFrame - this.timeAtLastFrame;
+            var timeSinceLastTick = deltaTime + this.leftover;
+            var catchUpFrameCount = Math.floor(timeSinceLastTick / this.idealTimePerFrame);
+            this.fpsReset += deltaTime;
+            if (this.fpsReset > 1000) {
+                this.fps = this.frames - 1;
+                this.fpsReset = 0;
+                this.frames = 0;
+            }
+            for (var i = 0; i < catchUpFrameCount; i++) {
+                this.update();
+                this.frames++;
+            }
             this.draw();
+            this.leftover = timeSinceLastTick - (catchUpFrameCount * this.idealTimePerFrame);
+            this.timeAtLastFrame = timeAtThisFrame;
             // Request a new frame from the browser and recursively call this method again.
-            requestAnimationFrame(this.processFrame.bind(this));
+            requestAnimationFrame(this.tick.bind(this));
         }
+    };
+    Game.prototype.update = function () {
+        return;
     };
     Game.prototype.draw = function () {
         this.canvas.clear();
+        this.canvas.hud.fillStyle = "white";
+        this.canvas.hud.fillText("" + this.fps, 5, 15);
     };
     return Game;
 }());
@@ -121,10 +148,19 @@ exports.Game = Game;
 Object.defineProperty(exports, "__esModule", { value: true });
 var Canvas = (function () {
     function Canvas(width, height) {
-        this.canvas = document.getElementById("glCanvas");
-        this.canvas.width = width;
-        this.canvas.height = height;
-        this.gl = this.canvas.getContext("webgl", { preserveDrawingBuffer: true });
+        this.glCanvas = document.getElementById("glCanvas");
+        this.hudCanvas = document.getElementById("hudCanvas");
+        this.hudCanvas.width = this.glCanvas.width = width;
+        this.hudCanvas.height = this.glCanvas.height = height;
+        this.initWebGL();
+        this.initHUD();
+    }
+    Canvas.prototype.clear = function () {
+        this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
+        this.hud.clearRect(0, 0, this.hudCanvas.width, this.hudCanvas.height);
+    };
+    Canvas.prototype.initWebGL = function () {
+        this.gl = this.glCanvas.getContext("webgl", { preserveDrawingBuffer: true });
         if (!this.gl) {
             alert("Error getting the WebGL context. Please check if your browser supports it.");
             return;
@@ -133,9 +169,12 @@ var Canvas = (function () {
         this.gl.clearDepth(1.0);
         this.gl.enable(this.gl.DEPTH_TEST);
         this.gl.depthFunc(this.gl.LEQUAL);
-    }
-    Canvas.prototype.clear = function () {
-        this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
+    };
+    Canvas.prototype.initHUD = function () {
+        this.hud = this.hudCanvas.getContext("2d");
+        if (!this.hud) {
+            alert("Error getting the Canvas2D context. Please check if your browser supports it.");
+        }
     };
     return Canvas;
 }());
