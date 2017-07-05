@@ -5,9 +5,26 @@
         <script src="./dist/cfh.vox.js"></script>
     </head>
 
+    <style>
+        .container {
+            position: relative;
+        }
+
+        #hudCanvas {
+            position: absolute;
+            left: 0px;
+            top: 0px;
+            z-index: 10;
+        }
+    </style>
+
     <body>
-        <canvas id="glCanvas" width="640" height="480">
-            Your browser does not support the <code>&lt;canvas&gt;</code> element.
-        </canvas>
+        <div class="container">
+            <canvas id="hudCanvas" width="640" height="480">
+            </canvas>
+            <canvas id="glCanvas" width="640" height="480">
+                Your browser does not support the <code>&lt;canvas&gt;</code> element.
+            </canvas>
+        </div>
     </body>
 </html>
