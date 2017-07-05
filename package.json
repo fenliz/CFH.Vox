@@ -4,5 +4,15 @@
   "description": "A WebGL voxel engine",
   "author": "fenliz",
   "license": "MIT",
-  "dependencies": {}
+  "scripts": {
+    "build": "webpack",
+    "watch": "webpack-dev-server --progress --colors"
+  },
+  "dependencies": {
+    "ts-loader": "^2.2.2"
+  },
+  "devDependencies": {
+    "webpack": "^3.0.0",
+    "webpack-dev-server": "^2.5.0"
+  }
 }
