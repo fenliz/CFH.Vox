@@ -1,3 +1,5 @@
+
+
 export class ConsoleInput {
     constructor(public action: string, public args: string[]) {
     }

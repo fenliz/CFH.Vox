@@ -5,7 +5,6 @@ import { ConsoleResponse } from "./console.response";
 
 export class Console implements ISystem {
     public isVisible: boolean = true;
-    public largeMode: boolean = false;
 
     // Styling
     private margin: number = 10;
@@ -14,24 +13,12 @@ export class Console implements ISystem {
     private readonly textInputHeight: number = 30;
     private inputText: string = "";
 
+    private largeMode: boolean = false;
     private supportedCommands: Array<[string, (args: string[]) => string]> = [];
     private responses: ConsoleResponse[] = [];
     private inputHistoryIterator = -1;
 
     constructor(private canvas: Canvas) {
-        // Register the available commands specific to the console.
-        this.registerCommand("console", (args: string[]): string => {
-            switch(args[0]) {
-                case "toggle":
-                    this.largeMode = !this.largeMode;
-                    return "Console: Large mode toggled.";
-                case "close":
-                    this.isVisible = false;
-                    return "Console: Closed.";
-
-            }
-            return "Console: Invalid Command!";
-        });
     }
 
     public registerCommand(action: string, callback: (args: string[]) => string): void {
@@ -87,14 +74,6 @@ export class Console implements ISystem {
         }
     }
 
-    public onKeyUp(ev: KeyboardEvent): void {
-        return;
-    }
-
-    public update(deltaTime: number): void {
-        return;
-    }
-
     public draw(): void {
         if (this.isVisible) {
             const consoleHeight: number = this.canvas.height *
@@ -114,7 +93,31 @@ export class Console implements ISystem {
         }
     }
 
-    private setInputTextFromHistory() {
+    public onKeyUp(ev: KeyboardEvent): void {
+        return;
+    }
+
+    public update(deltaTime: number): void {
+        return;
+    }
+
+    public registerConsoleCommands(console: Console): void {
+        // Register the available commands specific to the console.
+        this.registerCommand("console", (args: string[]): string => {
+            switch(args[0]) {
+                case "toggle":
+                    this.largeMode = !this.largeMode;
+                    return "Console: Large mode toggled.";
+                case "close":
+                    this.isVisible = false;
+                    return "Console: Closed.";
+
+            }
+            return "Console: Invalid Command!";
+        });
+    }
+
+    private setInputTextFromHistory(): void {
         // Clamp the iterator between -1 and the index of the last response.
         this.inputHistoryIterator = Math.max(-1, Math.min(this.responses.length - 1, this.inputHistoryIterator));
         if (this.inputHistoryIterator === -1) {

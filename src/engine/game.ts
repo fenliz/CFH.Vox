@@ -2,7 +2,7 @@ import { Canvas } from "./canvas";
 import { Console } from "./console/console";
 import { ISystem } from "./system";
 
-export class Game {
+export class Game implements ISystem {
     public isRunning: boolean;
     public canvas: Canvas;
     public framesPerSecond: number = 0;
@@ -18,14 +18,21 @@ export class Game {
     private lastDrawTime: number = new Date().getTime();
     private fpsTimer: number = 0;
     private fpsCounter: number = 0;
+    private showFps: boolean = true;
 
     constructor(width: number, height: number) {
         this.canvas = new Canvas(width, height);
 
-        this.systems.push(new Console(this.canvas));
+        const console: Console = new Console(this.canvas);
+        this.systems.push(console);
 
-        document.onkeydown = this.handleKeyDown.bind(this);
-        document.onkeyup = this.handleKeyUp.bind(this);
+        for (const system of this.systems) {
+            system.registerConsoleCommands(console);
+        }
+        this.registerConsoleCommands(console);
+
+        document.onkeydown = this.onKeyDown.bind(this);
+        document.onkeyup = this.onKeyUp.bind(this);
     }
 
     public start(): void {
@@ -35,16 +42,17 @@ export class Game {
 
     public stop(): void {
         this.isRunning = false;
+        this.canvas.clear();
     }
 
     // The game will update at a constant pace of maxUpdatesPerSecond
     // and draw as much as possible.
-    private tick(): void {
+    public tick(): void {
         if (this.isRunning) {
             let loops: number = 0;
 
             while (new Date().getTime() > this.nextTimeToUpdate && loops < this.maxDrawFramesToSkip) {
-                this.update();
+                this.update(this.secondsPerUpdate);
 
                 this.nextTimeToUpdate += this.msPerUpdate;
                 loops++;
@@ -70,33 +78,50 @@ export class Game {
         }
     }
 
-    private update(): void {
+    public update(deltaTime: number): void {
         for (const system of this.systems) {
-            system.update(this.secondsPerUpdate);
+            system.update(deltaTime);
         }
     }
 
-    private draw(): void {
+    public draw(): void {
         this.canvas.clear();
 
         for (const system of this.systems) {
             system.draw();
         }
 
-        // Draw the FPS counter in the top-left corner.
-        this.canvas.hud.fillStyle = "white";
-        this.canvas.hud.font = "16px Times New Roman";
-        this.canvas.hud.fillText("" + this.framesPerSecond, 10, 25);
+        if (this.showFps) {
+            // Draw the FPS counter in the top-left corner.
+            this.canvas.hud.fillStyle = "white";
+            this.canvas.hud.font = "16px Times New Roman";
+            this.canvas.hud.fillText("" + this.framesPerSecond, 10, 25);
+        }
     }
 
-    private handleKeyDown(ev: KeyboardEvent) {
+    public onKeyDown(ev: KeyboardEvent) {
         for (const system of this.systems) {
             system.onKeyDown(ev);
         }
     }
-    private handleKeyUp(ev: KeyboardEvent) {
+    
+    public onKeyUp(ev: KeyboardEvent) {
         for (const system of this.systems) {
             system.onKeyUp(ev);
         }
+    }
+
+    public registerConsoleCommands(console: Console) {
+        console.registerCommand("game", (args: string[]): string => {
+            switch(args[0]) {
+                case "fps":
+                    this.showFps = !this.showFps;
+                    return "Game: FPS counter toggled.";
+                case "exit":
+                    this.stop();
+                    return "Game: Aborted.";
+            }
+            return "Game: Invalid Command!";
+        });
     }
 }
