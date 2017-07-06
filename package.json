@@ -8,10 +8,11 @@
     "build": "webpack",
     "watch": "webpack-dev-server --progress --colors"
   },
-  "dependencies": {
-    "ts-loader": "^2.2.2"
-  },
+  "dependencies": {},
   "devDependencies": {
+    "ts-loader": "^2.2.2",
+    "tslint": "^5.5.0",
+    "typescript": "^2.4.1",
     "webpack": "^3.0.0",
     "webpack-dev-server": "^2.5.0"
   }

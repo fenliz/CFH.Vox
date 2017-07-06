@@ -51,9 +51,15 @@ export class Console implements ISystem {
     }
 
     public onKeyDown(ev: KeyboardEvent): void {
+        // Toggle console
+        if (ev.key === "§") {
+            this.isVisible = !this.isVisible;
+            return;
+        }
+
         if (this.isVisible) {
             // Allow letters, numbers and special characters.
-            if (/[a-zA-Z0-9-_ ]/.test(String.fromCharCode(ev.keyCode))) {
+            if (ev.key.length === 1) {
                 this.inputText += ev.key;
             }
 
@@ -78,11 +84,6 @@ export class Console implements ISystem {
             } else {
                 this.inputHistoryIterator = -1;
             }
-        }
-
-        // Toggle console
-        if (ev.key === "§") {
-            this.isVisible = !this.isVisible;
         }
     }
 
