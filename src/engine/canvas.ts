@@ -7,10 +7,11 @@ export class Canvas {
     public gl: WebGLRenderingContext;
     public hud: CanvasRenderingContext2D;
 
-    constructor(width: number, height: number) {
+    constructor(public width: number, public height: number) {
         this.glCanvas = document.getElementById("glCanvas") as HTMLCanvasElement;
         this.hudCanvas = document.getElementById("hudCanvas") as HTMLCanvasElement;
 
+        // Match the canvases for WebGL and Canvas2D in size to perfectly overlap eachother.
         this.hudCanvas.width = this.glCanvas.width = width;
         this.hudCanvas.height = this.glCanvas.height = height;
 
@@ -30,7 +31,7 @@ export class Canvas {
             return;
         }
 
-        this.gl.clearColor(0.0, 0.0, 0.0, 1.0);
+        this.gl.clearColor(0.4, 0.4, 0.4, 1.0);
         this.gl.clearDepth(1.0);
         this.gl.enable(this.gl.DEPTH_TEST);
         this.gl.depthFunc(this.gl.LEQUAL);
