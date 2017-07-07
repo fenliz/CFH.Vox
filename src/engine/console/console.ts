@@ -181,7 +181,7 @@ export class Console implements ISystem {
         // Draw border
         this.canvas.drawRect(textInputStart, consoleEnd, "white");
 
-        const inputTextInclMarker: string = this.inputText.slice(0, this.inputTextMarkerIndex) + "|" +
+        const inputTextWithMarker: string = this.inputText.slice(0, this.inputTextMarkerIndex) + "|" +
             this.inputText.slice(this.inputTextMarkerIndex);
 
         // Draw text
