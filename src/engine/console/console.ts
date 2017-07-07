@@ -176,17 +176,16 @@ export class Console implements ISystem {
     }
 
     private drawTextInputBox(consoleStart: [number, number], consoleEnd: [number, number], height: number): void {
-        const textInputStart: [number, number] = [consoleStart[0], consoleEnd[1] - height];
+        const textInputBoxStart: [number, number] = [consoleStart[0], consoleEnd[1] - height];
 
         // Draw border
-        this.canvas.drawRect(textInputStart, consoleEnd, "white");
+        this.canvas.drawRect(textInputBoxStart, consoleEnd, "white");
 
         const inputTextWithMarker: string = this.inputText.slice(0, this.inputTextMarkerIndex) + "|" +
             this.inputText.slice(this.inputTextMarkerIndex);
 
-        // Draw text
-        this.canvas.hud.fillStyle = "white";
-        this.canvas.hud.font = "18px Times New Roman";
-        this.canvas.hud.fillText(inputTextWithMarker, consoleStart[0] + 10, consoleEnd[1] - 10);
+        // Draw text with small inset.
+        const textInputStart: [number, number] = [consoleStart[0] + 10, consoleEnd[1] - 10];
+        this.canvas.drawText(inputTextWithMarker, textInputStart, "white", "18px Times New Roman");
     }
 }
