@@ -53,7 +53,6 @@ export class Console implements ISystem {
 
             // Draw background
             this.canvas.drawFilledRect(consoleStart, consoleEnd, "rgba(0, 0, 0, 0.3)");
-            // Draw border
             this.canvas.drawRect(consoleStart, consoleEnd, "white");
 
             this.drawResponses(consoleStart, consoleEnd, this.textInputHeight);
@@ -125,9 +124,9 @@ export class Console implements ISystem {
     public registerConsoleCommands(console: Console): void {
         this.registerCommand("console", (args: string[]): string => {
             switch(args[0]) {
-                case "size":
+                case "toggle":
                     this.largeMode = !this.largeMode;
-                    return "Console: Size changed.";
+                    return "Console: Size toggled.";
                 case "clear":
                     this.responses = [];
                     return "Console: Cleared.";
