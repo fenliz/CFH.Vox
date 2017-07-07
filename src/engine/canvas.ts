@@ -24,6 +24,22 @@ export class Canvas {
         this.hud.clearRect(0, 0, this.hudCanvas.width, this.hudCanvas.height);
     }
 
+    public drawText(text: string, point: [number, number], style: string, font: string): void {
+        this.hud.fillStyle = style;
+        this.hud.font = font;
+        this.hud.fillText(text, point[0], point[1]);
+    }
+
+    public drawRect(start: [number, number], end: [number, number], style: string) {
+        this.hud.strokeStyle = style;
+        this.hud.strokeRect(start[0], start[1], end[0] - start[0], end[1] - start[1]);
+    }
+
+    public drawFilledRect(start: [number, number], end: [number, number], style: string) {
+        this.hud.fillStyle = style;
+        this.hud.fillRect(start[0], start[1], end[0] - start[0], end[1] - start[1]);
+    }
+
     private initWebGL(): void {
         this.gl = this.glCanvas.getContext("webgl", { preserveDrawingBuffer: true }) as WebGLRenderingContext;
         if (!this.gl) {
